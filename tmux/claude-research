@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# =============================================================================
+#  claude-research — tmuxp 기반 ClaudeResearches 세션 런처
+#
+#  Usage:
+#    claude-research              # 세션 생성 또는 기존 세션에 attach
+#    claude-research -d           # detached 모드 (백그라운드 생성)
+#    claude-research -k           # 기존 세션 종료 후 새로 생성
+# =============================================================================
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+YAML_CONFIG="${SCRIPT_DIR}/tmux_init.yaml"
+SESSION_NAME="claude-research"
+
+# ── Color helpers ──────────────────────────────────────────────────────────
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
+warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
+error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+
+# ── Argument parsing ──────────────────────────────────────────────────────
+DETACHED=false
+KILL_FIRST=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -d|--detached) DETACHED=true; shift ;;
+        -k|--kill)     KILL_FIRST=true; shift ;;
+        -h|--help)
+            echo "Usage: $(basename "$0") [-d|--detached] [-k|--kill] [-h|--help]"
+            echo ""
+            echo "Options:"
+            echo "  -d, --detached   세션을 백그라운드에서 생성 (attach 하지 않음)"
+            echo "  -k, --kill       기존 세션 종료 후 새로 생성"
+            echo "  -h, --help       도움말"
+            exit 0
+            ;;
+        *) error "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
+# ── Prerequisite checks ──────────────────────────────────────────────────
+if ! command -v tmux &>/dev/null; then
+    error "tmux가 설치되어 있지 않습니다. brew install tmux"
+    exit 1
+fi
+
+if ! command -v tmuxp &>/dev/null; then
+    # uv 환경의 tmuxp 확인
+    if command -v uv &>/dev/null; then
+        TMUXP_CMD="uv run tmuxp"
+        if ! $TMUXP_CMD --version &>/dev/null; then
+            error "tmuxp가 설치되어 있지 않습니다. uv pip install tmuxp"
+            exit 1
+        fi
+    else
+        error "tmuxp가 설치되어 있지 않습니다."
+        exit 1
+    fi
+else
+    TMUXP_CMD="tmuxp"
+fi
+
+if [[ ! -f "$YAML_CONFIG" ]]; then
+    error "YAML 설정 파일을 찾을 수 없습니다: ${YAML_CONFIG}"
+    exit 1
+fi
+
+# ── Kill existing session if requested ────────────────────────────────────
+if $KILL_FIRST && tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    warn "기존 세션 '${SESSION_NAME}' 종료 중..."
+    tmux kill-session -t "$SESSION_NAME"
+    info "기존 세션 종료 완료"
+fi
+
+# ── Launch or attach ──────────────────────────────────────────────────────
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    info "기존 세션 '${SESSION_NAME}' 발견 — attach 합니다"
+    if [[ -z "${TMUX:-}" ]]; then
+        tmux attach-session -t "$SESSION_NAME"
+    else
+        warn "이미 tmux 내부에 있습니다. switch-client로 전환합니다"
+        tmux switch-client -t "$SESSION_NAME"
+    fi
+else
+    info "새 세션 '${SESSION_NAME}' 생성 중..."
+    # 항상 detached로 먼저 로드 (post-launch 명령 전송을 위해)
+    $TMUXP_CMD load -d -y "$YAML_CONFIG"
+
+    # ── Post-launch: Claude 기동 후 /sc:load 전송 ────────────────────────
+    # claude CLI가 완전히 기동될 때까지 대기한 뒤
+    # 각 윈도우의 1번째 pane에 /sc:load 명령어를 전송
+    CLAUDE_WAIT_SEC=5
+    info "Claude CLI 기동 대기 중... (${CLAUDE_WAIT_SEC}초)"
+    sleep "$CLAUDE_WAIT_SEC"
+
+    for win_idx in $(tmux list-windows -t "$SESSION_NAME" -F '#{window_index}'); do
+        tmux send-keys -t "${SESSION_NAME}:${win_idx}.1" '/sc:load' Enter
+        info "  → ${SESSION_NAME}:${win_idx}.1 에 /sc:load 전송 완료"
+    done
+
+    # detached 모드가 아니면 세션에 attach
+    if $DETACHED; then
+        info "세션이 백그라운드에서 생성되었습니다. tmux attach -t ${SESSION_NAME}"
+    elif [[ -z "${TMUX:-}" ]]; then
+        tmux attach-session -t "$SESSION_NAME"
+    else
+        warn "이미 tmux 내부에 있습니다. switch-client로 전환합니다"
+        tmux switch-client -t "$SESSION_NAME"
+    fi
+fi
