@@ -135,14 +135,7 @@ return {
           vim.notify("PDF 변환 시작...", vim.log.levels.INFO)
           vim.system({
             "pandoc",
-            "--standalone",
-            "--pdf-engine=/Library/TeX/texbin/xelatex",
-            "-V", "CJKmainfont=Apple SD Gothic Neo",
-            "-V", "CJKmonofont=Nanum Gothic",
-            "-V", "mainfont=Apple SD Gothic Neo",
-            "-V", "monofont=Nanum Gothic",
-            "-V", "geometry:margin=2cm",
-            "-V", "fontsize=11pt",
+            "-d", "pdf-korean",
             "--resource-path=" .. file_dir,
             fullname,
             "--output=" .. pdf_path,
@@ -201,7 +194,7 @@ return {
       end)
     end,
     keys = {
-      { "<leader>cp", "<cmd>LivePreview<cr>", ft = "markdown", desc = "Markdown Preview (Live)" },
+      { "<leader>cp", "<cmd>LivePreview start<cr>", ft = "markdown", desc = "Markdown Preview (Live)" },
     },
     opts = {
       port = 5500,
