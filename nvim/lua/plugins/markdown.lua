@@ -115,47 +115,6 @@ return {
     },
   },
 
-  -- Markdown → PDF 변환 (pandoc + xelatex + 한글)
-  -- md-pdf.nvim의 토큰 파서가 공백 포함 폰트명을 깨뜨리므로
-  -- vim.system으로 직접 pandoc 호출
-  {
-    "nvim-lua/plenary.nvim", -- 이미 설치되어 있지만 명시적 의존성
-    keys = {
-      {
-        "<leader>cP",
-        function()
-          if vim.bo.filetype ~= "markdown" then
-            vim.notify("Markdown 파일이 아닙니다", vim.log.levels.ERROR)
-            return
-          end
-          local fullname = vim.api.nvim_buf_get_name(0)
-          local file_dir = vim.fn.fnamemodify(fullname, ":h")
-          local pdf_path = vim.fn.fnamemodify(fullname, ":r") .. ".pdf"
-
-          vim.notify("PDF 변환 시작...", vim.log.levels.INFO)
-          vim.system({
-            "pandoc",
-            "-d", "pdf-korean",
-            "--resource-path=" .. file_dir,
-            fullname,
-            "--output=" .. pdf_path,
-          }, { text = true }, function(obj)
-            vim.schedule(function()
-              if obj.code == 0 then
-                vim.notify("PDF 변환 완료: " .. vim.fn.fnamemodify(pdf_path, ":t"), vim.log.levels.INFO)
-                vim.system({ "open", pdf_path })
-              else
-                vim.notify("PDF 변환 실패:\n" .. (obj.stderr or ""), vim.log.levels.ERROR)
-              end
-            end)
-          end)
-        end,
-        ft = "markdown",
-        desc = "Markdown to PDF (한글)",
-      },
-    },
-  },
-
   -- markdown-preview.nvim: 브라우저 미리보기 (레거시, <leader>cP 에서 PDF용으로 유지)
   {
     "iamcco/markdown-preview.nvim",
