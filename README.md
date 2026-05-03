@@ -1,5 +1,7 @@
 # MyConfig
 
+> **Version**: v1.1.0 · **Last updated**: 2026-05-03
+
 macOS 개발 환경을 위한 Neovim + tmux 설정 파일 모음입니다.
 
 ## 구조
@@ -28,8 +30,8 @@ MyConfig/
 
 ### 활성화된 LazyVim Extras
 
-- **언어**: Python, TypeScript, JSON, YAML, TOML, Markdown, SQL, Tailwind, CMake, Git
-- **에디터**: Neo-tree, FZF, Outline, Dial
+- **언어**: Python, TypeScript, JSON, YAML, TOML, Markdown, SQL, Tailwind, CMake, Docker, Git
+- **에디터**: Neo-tree, FZF, Outline, Dial, Aerial
 - **코딩**: Yanky
 
 ### 주요 커스텀 플러그인
@@ -40,9 +42,23 @@ MyConfig/
 | `plugins/python.lua` | Python 개발 환경 |
 | `plugins/telescope.lua` | Telescope 검색 설정 |
 | `plugins/neo-tree.lua` | 파일 탐색기 설정 |
-| `plugins/markdown.lua` | Markdown 미리보기/편집 |
+| `plugins/markdown.lua` | Markdown 렌더링/미리보기/PDF 변환 |
 | `plugins/auto-session.lua` | 세션 자동 저장/복원 |
 | `plugins/treesitter.lua` | Treesitter 구문 강조 |
+
+### Markdown 워크플로우
+
+`plugins/markdown.lua` 에 통합된 마크다운 도구 모음:
+
+| 플러그인 | 용도 | 키맵 |
+|----------|------|------|
+| `render-markdown.nvim` | Obsidian 스타일 인라인 렌더링 | `<leader>um` (toggle) |
+| `live-preview.nvim` | 순수 Lua 브라우저 미리보기 (최신 Mermaid 자동 갱신) | `<leader>cp` |
+| `markdown-preview.nvim` | 레거시 브라우저 미리보기 | `<leader>cm` |
+| `follow-md-links.nvim` | `[label](path)` / `[[wiki]]` 링크를 `<CR>` 로 따라가기 | `<CR>` |
+| `pandoc` (외부) | Markdown → PDF (한글, xelatex) | `<leader>cP` |
+
+`<leader>cP` 는 `pandoc -d pdf-korean` 정의 파일과 `~/SynologyDrive/PublicShare/pdfs/` 출력 디렉터리를 사용합니다 (`lua/config/keymaps.lua`).
 
 ### 주요 커스텀 옵션
 
@@ -50,6 +66,8 @@ MyConfig/
 - 시스템 클립보드 연동 (`unnamedplus`)
 - SSH 원격 환경에서 OSC 52를 통한 클립보드 지원
 - `<leader>fp`: 현재 파일 경로를 클립보드에 복사
+- `<leader>cP`: 현재 Markdown 파일을 PDF로 변환 (pandoc + xelatex, 한글 지원)
+- `<leader>eW`: Neo-tree 너비 토글 (30 ↔ 160)
 
 ### 설치
 
