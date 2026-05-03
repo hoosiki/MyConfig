@@ -94,6 +94,14 @@ return {
     },
   },
 
+  -- follow-md-links.nvim: 마크다운 링크를 <CR>로 따라가기
+  -- [label](path) 와 [[wiki]] 둘 다 지원. 절대/상대 경로 모두 동작.
+  -- E433/E426 에러 원인은 <C-]>(ctags tag jump)를 눌러서 발생. 마크다운에선 <CR> 사용.
+  {
+    "jghauser/follow-md-links.nvim",
+    ft = "markdown",
+  },
+
   -- markdown lint 비활성화
   {
     "mfussenegger/nvim-lint",
