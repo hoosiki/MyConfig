@@ -1,0 +1,36 @@
+# Ghostty Configuration
+# iTerm2 Default profile에서 마이그레이션한 키바인딩
+# (Source: ~/Downloads/Default.json — iTerm2 Keyboard Map)
+#
+# Ghostty 키바인딩 문법:
+#   keybind = <triggers>=<action>
+#   text:STRING — 터미널에 STRING 전송 (Zig escape 지원: \x20=space, \x1b=ESC)
+#   modifiers: cmd / super, ctrl, shift, alt / opt
+#
+# 적용: Ghostty 재시작 또는 `Cmd+Shift+,` (Reload Config)
+# 점검: ghostty +list-keybinds 로 현재 바인딩 확인
+
+# ─────────────────────────────────────────────────────────────────
+# LazyVim/Neovim leader 단축키 매핑 (iTerm2 → Ghostty 1:1 이식)
+# ─────────────────────────────────────────────────────────────────
+
+# Cmd+Shift+O → " fF"  (LazyVim <leader>fF)
+keybind = cmd+shift+o=text:\x20fF
+
+# Cmd+E → " fb"  (LazyVim <leader>fb — find buffers)
+keybind = cmd+e=text:\x20fb
+
+# Cmd+Shift+A → ESC + ":"  (vim normal mode → command line 진입)
+keybind = cmd+shift+a=text:\x1b:
+
+# Ctrl+7 → " cs"  (LazyVim <leader>cs)
+keybind = ctrl+seven=text:\x20cs
+
+# Cmd+/ → "gc"  (vim 주석 토글; visual mode에서도 동작)
+keybind = cmd+slash=text:gc
+
+# Ctrl+1 → " E"  (LazyVim <leader>E — file explorer)
+keybind = ctrl+one=text:\x20E
+
+# Ctrl+9 → " gG"  (LazyVim <leader>gG — LazyGit)
+keybind = ctrl+nine=text:\x20gG
