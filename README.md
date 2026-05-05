@@ -1,8 +1,8 @@
 # MyConfig
 
-> **Version**: v1.1.0 · **Last updated**: 2026-05-03
+> **Version**: v1.2.0 · **Last updated**: 2026-05-06
 
-macOS 개발 환경을 위한 Neovim + tmux 설정 파일 모음입니다.
+macOS 개발 환경을 위한 Neovim + tmux + Ghostty 설정 파일 모음입니다.
 
 ## 구조
 
@@ -18,10 +18,13 @@ MyConfig/
 │       ├── config/        # 개인 설정 (options, keymaps, autocmds)
 │       └── plugins/       # 플러그인 설정
 │
-└── tmux/                  # tmux 설정
-    ├── tmux.conf          # tmux 메인 설정 파일
-    ├── tmux_init_example.yaml  # tmuxp 세션 템플릿 (예시)
-    └── claude-research    # tmuxp 세션 런처 스크립트
+├── tmux/                  # tmux 설정
+│   ├── tmux.conf          # tmux 메인 설정 파일
+│   ├── tmux_init_example.yaml  # tmuxp 세션 템플릿 (예시)
+│   └── claude-research    # tmuxp 세션 런처 스크립트
+│
+└── ghostty/               # Ghostty 터미널 설정
+    └── config             # 키바인딩 (iTerm2 → Ghostty 마이그레이션)
 ```
 
 ## Neovim
@@ -134,16 +137,48 @@ ln -s /path/to/MyConfig/tmux/tmux_init_example.yaml ~/.config/tmux/tmux_init.yam
 ln -s /path/to/MyConfig/tmux/claude-research ~/.config/tmux/claude-research
 ```
 
+## Ghostty
+
+[Ghostty](https://ghostty.org/) 터미널 설정 파일입니다. iTerm2 Default 프로파일의 키바인딩을 Ghostty 문법으로 1:1 이식한 구성입니다.
+
+### LazyVim 연동 키바인딩
+
+LazyVim leader 단축키를 터미널 키 입력으로 매핑하여 macOS 표준 키 조합으로 Neovim 기능을 호출할 수 있습니다.
+
+| 키 조합 | 전송 시퀀스 | LazyVim 동작 |
+|---------|-------------|--------------|
+| `Cmd+Shift+O` | `<leader>fF` | 파일 검색 (현재 디렉터리) |
+| `Cmd+E` | `<leader>fb` | 버퍼 검색 |
+| `Cmd+Shift+A` | `ESC` + `:` | normal mode → command line |
+| `Cmd+/` | `gc` | 주석 토글 (visual mode 포함) |
+| `Ctrl+1` | `<leader>E` | 파일 탐색기 (Neo-tree) |
+| `Ctrl+7` | `<leader>cs` | 심볼 패널 |
+| `Ctrl+9` | `<leader>gG` | LazyGit |
+
+설정 적용은 Ghostty 재시작 또는 `Cmd+Shift+,` (Reload Config)로 가능하며, `ghostty +list-keybinds`로 현재 바인딩을 점검할 수 있습니다.
+
+### 설치
+
+```bash
+# 기존 ghostty 설정 백업 (있는 경우)
+mv ~/.config/ghostty ~/.config/ghostty.bak
+
+# 디렉터리 단위 심볼릭 링크 생성
+ln -s /path/to/MyConfig/ghostty ~/.config/ghostty
+```
+
 ## 의존성
 
 - [Neovim](https://neovim.io/) >= 0.10
 - [tmux](https://github.com/tmux/tmux) >= 3.6
 - [tmuxp](https://github.com/tmux-python/tmuxp) (세션 런처 사용 시)
+- [Ghostty](https://ghostty.org/) (선택; 키바인딩 사용 시)
 - [Claude Code](https://claude.ai/claude-code) (세션 런처에서 사용)
 
 ## License
 
 - `nvim/`: LazyVim starter template 유래 파일은 [Apache License 2.0](nvim/LICENSE) 적용. 개인 작성 코드(`lua/config/`, `lua/plugins/`)는 자유롭게 사용 가능.
 - `tmux/`: 자유롭게 사용 가능.
+- `ghostty/`: 자유롭게 사용 가능.
 
 자세한 라이선스 정보는 [nvim/AboutRepository.md](nvim/AboutRepository.md)를 참고하세요.
