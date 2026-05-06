@@ -34,3 +34,78 @@ keybind = ctrl+one=text:\x20E
 
 # Ctrl+9 → " gG"  (LazyVim <leader>gG — LazyGit)
 keybind = ctrl+nine=text:\x20gG
+
+# ═════════════════════════════════════════════════════════════════
+# 폰트 (Q1: JetBrainsMono Nerd Font + Apple SD Gothic Neo)
+# ═════════════════════════════════════════════════════════════════
+# Primary: 영문 — ligature 풍부, 가독성 우수
+# Fallback: CJK — macOS 시스템 통합감
+font-family = "JetBrainsMono Nerd Font"
+font-family = "Apple SD Gothic Neo"
+font-size = 14
+
+# ligature 명시 활성 (=>, !=, >=, ===, |> 등)
+font-feature = +calt
+font-feature = +liga
+
+# Retina 글자 두께 강화 (macOS only)
+font-thicken = true
+font-thicken-strength = 100
+
+# ═════════════════════════════════════════════════════════════════
+# 테마 (Q2: Tokyo Night + 자동전환 + 가벼운 투명)
+# ═════════════════════════════════════════════════════════════════
+# nvim tokyonight과 통일. 시스템 다크/라이트 따라 자동 전환
+# 사용 가능 variants: TokyoNight / TokyoNight Day / TokyoNight Moon / TokyoNight Night / TokyoNight Storm
+# (취향에 따라 dark 쪽을 'TokyoNight Storm' 또는 'TokyoNight Night'로 변경 가능)
+theme = light:TokyoNight Day,dark:TokyoNight
+
+# macOS Appearance 따라감
+window-theme = system
+
+# 가벼운 투명 + Blur (배경 약간 비침, 가독성 유지)
+background-opacity = 0.95
+background-blur-radius = 20
+
+# ═════════════════════════════════════════════════════════════════
+# 알림 (Q3: Boris-style + 5 Claude 병렬 + 집 환경 사운드 OFF)
+# ═════════════════════════════════════════════════════════════════
+# bell-features 컴포넌트 (Ghostty 1.3+):
+#   system    → macOS Notification Center 알림
+#   audio     → 시스템 사운드 (집 환경 → 제외)
+#   attention → Dock 아이콘 바운스
+#   title     → 탭/창 제목에 시각 표시
+#   border    → 창 테두리 깜빡임 (visual flash)
+# 'audio' 빠짐 = 무음. 'border' 추가 = 시각 알림 (별도 visual-bell 옵션 없음)
+bell-features = system,attention,title,border
+
+# 사운드를 다시 켜고 싶으면: bell-features에 'audio' 추가 + 아래 주석 해제
+# bell-audio-volume = 0.5
+# bell-audio-path = /System/Library/Sounds/Glass.aiff
+
+# ═════════════════════════════════════════════════════════════════
+# macOS UI (Q4)
+# ═════════════════════════════════════════════════════════════════
+# Native titlebar (표준 macOS)
+macos-titlebar-style = native
+
+# Glass 아이콘 (Mitchell Hashimoto 디자인)
+macos-icon = glass
+
+# 윈도우 패딩 (균등 8px)
+window-padding-x = 8
+window-padding-y = 8
+window-padding-balance = true
+
+# Option 키는 macOS 기본 동작 (특수문자 입력 — ¡™£¢∞ 등)
+macos-option-as-alt = false
+
+# 재시작 시 윈도우 위치/크기/탭 항상 복원
+window-save-state = always
+
+# Native fullscreen (별도 Space로 이동)
+macos-non-native-fullscreen = false
+
+# Secure input — sudo·SSH password prompt 시 자동 보안 입력 + 시각 표시
+macos-auto-secure-input = true
+macos-secure-input-indication = true

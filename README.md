@@ -1,6 +1,6 @@
 # MyConfig
 
-> **Version**: v1.2.0 · **Last updated**: 2026-05-06
+> **Version**: v1.3.0 · **Last updated**: 2026-05-06
 
 macOS 개발 환경을 위한 Neovim + tmux + Ghostty 설정 파일 모음입니다.
 
@@ -139,7 +139,50 @@ ln -s /path/to/MyConfig/tmux/claude-research ~/.config/tmux/claude-research
 
 ## Ghostty
 
-[Ghostty](https://ghostty.org/) 터미널 설정 파일입니다. iTerm2 Default 프로파일의 키바인딩을 Ghostty 문법으로 1:1 이식한 구성입니다.
+[Ghostty](https://ghostty.org/) 터미널 설정 파일입니다. iTerm2 Default 프로파일의 키바인딩을 Ghostty 문법으로 1:1 이식하고, 폰트·테마·알림·macOS UI 설정을 통합한 구성입니다.
+
+### 폰트
+
+| 항목 | 값 |
+|------|-----|
+| Primary | JetBrainsMono Nerd Font (영문, ligature 풍부) |
+| Fallback | Apple SD Gothic Neo (CJK, macOS 시스템 통합) |
+| Size | 14 |
+| Ligature | `+calt`, `+liga` 활성 (`=>`, `!=`, `>=`, `===`, `|>` 등) |
+| Retina | `font-thicken = true`, `font-thicken-strength = 100` |
+
+### 테마
+
+- nvim의 tokyonight과 통일된 Tokyo Night 테마
+- macOS Appearance에 따라 자동 전환: `light:TokyoNight Day,dark:TokyoNight`
+- 가벼운 투명 + Blur: `background-opacity = 0.95`, `background-blur-radius = 20`
+- 사용 가능한 variants: `TokyoNight`, `TokyoNight Day`, `TokyoNight Moon`, `TokyoNight Night`, `TokyoNight Storm`
+
+### 알림 (Bell)
+
+Ghostty 1.3+ `bell-features` 컴포넌트 기반 — 집 환경 무음 구성.
+
+| 컴포넌트 | 활성 | 설명 |
+|---------|------|------|
+| `system` | O | macOS Notification Center 알림 |
+| `attention` | O | Dock 아이콘 바운스 |
+| `title` | O | 탭/창 제목에 시각 표시 |
+| `border` | O | 창 테두리 깜빡임 (visual flash) |
+| `audio` | X | 시스템 사운드 — 집 환경 무음 |
+
+사운드를 켜려면 `bell-features`에 `audio`를 추가하고 `bell-audio-volume`/`bell-audio-path`를 설정합니다.
+
+### macOS UI
+
+| 항목 | 설정 |
+|------|------|
+| 타이틀바 | `macos-titlebar-style = native` |
+| 앱 아이콘 | `macos-icon = glass` (Mitchell Hashimoto 디자인) |
+| 윈도우 패딩 | 8px 균등 (`window-padding-balance = true`) |
+| Option 키 | macOS 기본 동작 (특수문자 입력, `macos-option-as-alt = false`) |
+| 윈도우 복원 | `window-save-state = always` (위치/크기/탭) |
+| 풀스크린 | Native (별도 Space) |
+| Secure input | `sudo`/SSH password prompt 시 자동 보안 입력 + 시각 표시 |
 
 ### LazyVim 연동 키바인딩
 
