@@ -107,5 +107,6 @@ window-save-state = always
 macos-non-native-fullscreen = false
 
 # Secure input — sudo·SSH password prompt 시 자동 보안 입력 + 시각 표시
-macos-auto-secure-input = true
-macos-secure-input-indication = true
+#macos-auto-secure-input = true
+#macos-secure-input-indication = true
+shell-integration-features = no-cursor,sudo,title
