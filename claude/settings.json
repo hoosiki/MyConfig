@@ -1,0 +1,243 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(source:*)",
+      "Bash(find:*)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)",
+      "Bash(tree:*)",
+      "Bash(ruff:*)",
+      "Bash(touch:*)",
+      "Bash(cat:*)",
+      "Bash(ruff check:*)",
+      "Bash(pytest:*)",
+      "Bash(python:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(pip install *)",
+      "Bash(python *)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(git show:*)",
+      "Bash(git tag:*)",
+      "Bash(git merge:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git remote:*)",
+      "Bash(git clone:*)",
+      "Bash(gh:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker compose exec:*)",
+      "Bash(docker compose logs:*)",
+      "Bash(node *.js:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Edit(*.pptx)",
+      "Edit(*.docx)",
+      "Skill(document-skills:xlsx)",
+      "Skill(document-skills:doc-coauthoring)",
+      "Skill(document-skills:frontend-design)",
+      "Skill(document-skills:docx)",
+      "Skill(document-skills:internal-comms)",
+      "Skill(document-skills:algorithmic-art)",
+      "Skill(document-skills:web-artifacts-builder)",
+      "Skill(document-skills:canvas-design)",
+      "Skill(document-skills:mcp-builder)",
+      "Skill(document-skills:theme-factory)",
+      "Skill(document-skills:pptx)",
+      "Skill(document-skills:pdf)",
+      "Skill(document-skills:brand-guidelines)",
+      "Skill(document-skills:slack-gif-creator)",
+      "Skill(document-skills:skill-creator)",
+      "Skill(document-skills:webapp-testing)",
+      "Skill(brew-manager)",
+      "Skill(skill-updater)",
+      "Edit(*.py)",
+      "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:github.com)",
+      "mcp__airis-mcp-gateway__airis-find",
+      "mcp__airis-mcp-gateway__airis-exec",
+      "mcp__airis-mcp-gateway__airis-schema"
+    ],
+    "deny": [
+      "Edit(.env*)",
+      "Bash(rm:*)",
+      "Bash(rm -rf:*)",
+      "Read(.env*)",
+      "Bash(sudo:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)",
+      "Read(id_rsa)",
+      "Read(id_ed25519)",
+      "Read(**/*token*)",
+      "Edit(**/secrets/**)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm remove:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "claude-fable-5[1m]",
+  "skillOverrides": {
+    "code-review": "off",
+    "wizard": "off",
+    "codebase-design": "off",
+    "git-guardrails-claude-code": "off",
+    "setup-pre-commit": "off",
+    "domain-modeling": "off",
+    "scaffold-exercises": "off",
+    "prototype": "off",
+    "migrate-to-shoehorn": "off",
+    "diagnosing-bugs": "off",
+    "writing-for-agents": "off",
+    "resolving-merge-conflicts": "off",
+    "find-skills": "off",
+    "research": "off"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "document-skills@anthropic-agent-skills": true,
+    "langchain-skills@langchain-skills": false,
+    "lazy2work@hoosiki-marketplace": true,
+    "frontend-design@claude-code-plugins": false,
+    "tavily@tavily-plugins": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": false
+  },
+  "extraKnownMarketplaces": {
+    "langchain-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/langchain-ai/langchain-skills.git"
+      }
+    },
+    "hoosiki-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "hoosiki/hoosiki-marketplace"
+      }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
+    },
+    "tavily-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/tavily-ai/skills.git"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    }
+  },
+  "effortLevel": "xhigh",
+  "tui": "default",
+  "skipDangerousModePermissionPrompt": true,
+  "editorMode": "vim"
+}
