@@ -260,7 +260,7 @@ ln -s /path/to/MyConfig/ghostty ~/.config/ghostty
 | 블록 | 내용 |
 |------|------|
 | `permissions.allow` | 읽기 전용·일상 명령 자동 허용 — `grep`/`ls`/`cat`/`find`, `git status/log/diff/add/commit/…`, `gh`, `pytest`/`ruff`, `docker compose`, `npm install`, document-skills 계열 스킬, `WebFetch(docs.anthropic.com, github.com)` |
-| `permissions.deny` | 파괴적·민감 작업 차단 — `rm`, `sudo`, `git push/reset/rebase`, `.env*`·SSH 키·`*token*` 읽기, `secrets/` 편집 |
+| `permissions.deny` | 파괴적·민감 작업 차단 — `sudo`, `git push/reset/rebase`, SSH 키·`*token*` 읽기, `secrets/` 편집 |
 | `hooks` | 모든 라이프사이클 이벤트(SessionStart/End, UserPromptSubmit, Stop, PostToolUse, PermissionRequest 등)에서 [Superset](https://github.com/superset-sh/superset) 에이전트 상태 알림 스크립트 호출. `$SUPERSET_HOME_DIR`가 없으면 아무 일도 하지 않음(no-op) |
 | `enabledPlugins` / `extraKnownMarketplaces` | document-skills, tavily, lazy2work(개인 마켓플레이스) 등 플러그인 소스 |
 | 기타 | `model`, `effortLevel`, `editorMode = vim`, 비활성화한 내장 스킬(`skillOverrides`) |

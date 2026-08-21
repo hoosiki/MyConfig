@@ -71,10 +71,6 @@
       "mcp__airis-mcp-gateway__airis-schema"
     ],
     "deny": [
-      "Edit(.env*)",
-      "Bash(rm:*)",
-      "Bash(rm -rf:*)",
-      "Read(.env*)",
       "Bash(sudo:*)",
       "Bash(git push:*)",
       "Bash(git reset:*)",
