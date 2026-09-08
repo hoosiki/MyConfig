@@ -1,6 +1,6 @@
 # MyConfig
 
-> **Version**: v1.4.0 · **Last updated**: 2026-08-21
+> **Version**: v1.5.0 · **Last updated**: 2026-09-08
 
 macOS 개발 환경을 위한 Neovim + tmux + Ghostty + Claude Code 설정 파일 모음입니다.
 
@@ -298,9 +298,6 @@ ln -s /path/to/MyConfig/claude/settings.json ~/.claude/settings.json
 
 ## License
 
-- `nvim/`: LazyVim starter template 유래 파일은 [Apache License 2.0](nvim/LICENSE) 적용. 개인 작성 코드(`lua/config/`, `lua/plugins/`)는 자유롭게 사용 가능.
-- `tmux/`: 자유롭게 사용 가능.
-- `ghostty/`: 자유롭게 사용 가능.
-- `claude/`: 자유롭게 사용 가능.
+[MIT](LICENSE) — 단, `nvim/`의 LazyVim starter template 유래 파일은 [Apache License 2.0](nvim/LICENSE)을 따릅니다. 개인 작성 부분(`nvim/lua/config/`, `nvim/lua/plugins/`, `tmux/`, `ghostty/`, `claude/`)은 MIT입니다.
 
-자세한 라이선스 정보는 [nvim/AboutRepository.md](nvim/AboutRepository.md)를 참고하세요.
+두 라이선스의 경계에 대한 배경은 [nvim/AboutRepository.md](nvim/AboutRepository.md)를 참고하세요.
