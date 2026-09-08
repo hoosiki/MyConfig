@@ -1,6 +1,6 @@
 # MyConfig
 
-> **Version**: v1.6.0 · **Last updated**: 2026-09-08
+> **Version**: v1.7.0 · **Last updated**: 2026-09-08
 
 macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊김 없이 하기 위한 개발 환경 설정 모음입니다. Neovim·tmux·Ghostty·Claude Code를 하나의 키맵·테마·세션 체계로 묶어, clone 후 심볼릭 링크만 걸면 같은 환경이 그대로 재현됩니다.
 
@@ -79,13 +79,13 @@ MyConfig/
 
 | 파일 | 설명 |
 |------|------|
-| `plugins/lsp.lua` | LSP 설정 |
-| `plugins/python.lua` | Python 개발 환경 |
-| `plugins/telescope.lua` | Telescope 검색 설정 |
-| `plugins/neo-tree.lua` | 파일 탐색기 설정 |
-| `plugins/markdown.lua` | Markdown 렌더링/미리보기/PDF 변환 |
-| `plugins/auto-session.lua` | 세션 자동 저장/복원 |
-| `plugins/treesitter.lua` | Treesitter 구문 강조 |
+| `plugins/lsp.lua` | marksman 진단 끄기 — Obsidian vault의 번호 파일·번호 디렉터리 공존을 "Ambiguous link"로 오탐하는 문제 회피 |
+| `plugins/python.lua` | pyright `typeCheckingMode = "off"` |
+| `plugins/telescope.lua` | dotfiles 포함 검색(`hidden`, `--hidden`), `.DS_Store`·`__pycache__`·`*.pyc` 제외 |
+| `plugins/neo-tree.lua` | 너비 토글(`<leader>eW`), dotfiles 흐리게 표시·gitignored 숨김, `O` 로 Finder에서 위치 표시 |
+| `plugins/markdown.lua` | Markdown 렌더링·미리보기·PDF 변환 도구 모음 (아래 표) |
+| `plugins/auto-session.lua` | 세션 자동 저장/복원 (`~`, `~/Downloads`, `/` 는 제외) |
+| `plugins/treesitter.lua` | 파서 자동 설치 + `cpp`·`cmake` 기본 포함 |
 
 ### Markdown 워크플로우
 
@@ -94,12 +94,13 @@ MyConfig/
 | 플러그인 | 용도 | 키맵 |
 |----------|------|------|
 | `render-markdown.nvim` | Obsidian 스타일 인라인 렌더링 | `<leader>um` (toggle) |
-| `live-preview.nvim` | 순수 Lua 브라우저 미리보기 (최신 Mermaid 자동 갱신) | `<leader>cp` |
+| `live-preview.nvim` | 순수 Lua 브라우저 미리보기 (`localhost:5500`, 설치·업데이트마다 최신 Mermaid를 내려받아 교체) | `<leader>cp` |
 | `markdown-preview.nvim` | 레거시 브라우저 미리보기 | `<leader>cm` |
 | `follow-md-links.nvim` | `[label](path)` / `[[wiki]]` 링크를 `<CR>` 로 따라가기 | `<CR>` |
 | `pandoc` (외부) | Markdown → PDF (한글, xelatex) | `<leader>cP` |
+| `nvim-lint` / `conform.nvim` | Markdown에 한해 lint·저장 시 포맷 비활성 (prettier가 `_` 를 `*` 로 바꾸는 문제 회피) | — |
 
-`<leader>cP` 는 `pandoc -d pdf-korean` 정의 파일과 `~/SynologyDrive/PublicShare/pdfs/` 출력 디렉터리를 사용합니다 (`lua/config/keymaps.lua`). pandoc은 필터가 실패해도 종료 코드 0으로 끝나기 때문에, 변환이 성공해도 경고가 있으면 건수와 함께 알림에 표시합니다 — mermaid 다이어그램이 코드블록으로 남는 경우를 놓치지 않기 위해서입니다.
+`<leader>cP` 는 pandoc 정의 파일 `pdf-korean` 을 쓰고 결과를 `~/SynologyDrive/PublicShare/pdfs/` 에 저장합니다 (`lua/config/keymaps.lua`). 정의 파일(`~/.local/share/pandoc/defaults/pdf-korean.yaml`)과 출력 디렉터리는 **이 저장소에 포함되어 있지 않으므로 직접 준비해야 하며**, 출력 경로는 파일 상단 `PDF_OUTPUT_DIR` 상수에 절대 경로로 박혀 있으니 다른 환경에서는 고쳐 써야 합니다. pandoc은 필터가 실패해도 종료 코드 0으로 끝나기 때문에, 변환이 성공해도 경고가 있으면 건수와 함께 알림에 표시합니다 — mermaid 다이어그램이 코드블록으로 남는 경우를 놓치지 않기 위해서입니다.
 
 ### 주요 커스텀 옵션
 
@@ -108,6 +109,7 @@ MyConfig/
 - SSH 원격 환경에서 OSC 52를 통한 클립보드 지원
 - `<leader>fp`: 현재 파일 경로를 클립보드에 복사
 - `<leader>eW`: Neo-tree 너비 토글 (30 ↔ 160)
+- 플러그인 업데이트를 주기적으로 확인하되 알림은 띄우지 않음 (`lua/config/lazy.lua` 의 `checker`)
 
 ### 설치
 
@@ -124,7 +126,7 @@ nvim
 
 ## tmux
 
-tmux 3.4+ 대상, macOS / Ubuntu 공용 설정입니다. Solarized 256 테마를 기반으로 합니다.
+tmux 3.4+ 대상, macOS / Ubuntu 공용 설정입니다. Solarized 256 테마를 기반으로 하며, 플러그인은 TPM으로 `tmux-sensible` · `tmux-yank` 둘만 씁니다.
 
 ### 주요 설정
 
@@ -132,12 +134,18 @@ tmux 3.4+ 대상, macOS / Ubuntu 공용 설정입니다. Solarized 256 테마를
 |------|------|
 | Prefix | `Ctrl-k` (기본 `Ctrl-b` 해제) |
 | Pane 이동 | `h/j/k/l` (Vi-style) |
-| Pane 크기 조절 | `H/J/K/L` (5칸 단위) |
-| 윈도우 전환 | `Alt+1~9` (prefix 없이) |
-| 화면 분할 | `\|` 또는 `\\` (수평), `-` (수직) |
-| Copy mode | Vi-style (`v` 선택, `y` 복사) |
+| Pane 크기 조절 | `H/J/K/L` (5칸 단위, 반복 가능) |
 | 마지막 pane | `prefix+w` 또는 `Alt+W` |
+| Pane 번호 표시 | `Alt+q` (prefix 없이) |
+| 윈도우 전환 | `Alt+1~9` (prefix 없이) |
+| 윈도우 순환 | `prefix+Ctrl-h` / `prefix+Ctrl-l` (반복 가능) |
+| 윈도우를 1번으로 | `prefix+T` |
+| 화면 분할 | `\|` 또는 `\\` (수평), `-` (수직) |
+| Copy mode | Vi-style (`v` 선택, `y` 복사 → OSC 52로 시스템 클립보드 전달) |
+| 설정 리로드 | `prefix+r` |
 | F12 | 중첩 tmux 세션용 prefix 토글 |
+
+이 밖에 마우스 지원, 스크롤백 50,000줄, 상태바 상단 가운데 정렬, 다른 윈도우 활동 감지(`monitor-activity`)가 켜져 있고, 기본 셸은 `$SHELL` 을 따라갑니다 (macOS는 zsh, Ubuntu는 bash).
 
 ### TUI 렌더링
 
@@ -155,6 +163,7 @@ Claude Code 같은 풀스크린 TUI가 tmux 안에서 깨지지 않도록 한 �
 - 활성 pane: 밝은 파란색 테두리 (`colour39`), 기본 배경
 - 비활성 pane: 어두운 테두리 (`colour238`), 어두운 배경
 - 배경 dimming은 hook 없이 `window-style` / `window-active-style`로 tmux가 리드로우 시 네이티브 적용 (이전 `pane-focus-in/out` hook 방식은 `select-pane -P`가 pane을 선택해 버리는 부작용이 있어 제거)
+- 테두리는 굵은 선(`pane-border-lines heavy`)에 방향 표시(`pane-border-indicators both`)
 - `focus-events on`으로 Neovim 포커스 감지 연동
 
 ### tmuxp 세션 런처
@@ -181,15 +190,25 @@ cp tmux/tmux_init_example.yaml tmux/tmux_init.yaml
 ./tmux/claude-research --dry-run
 ```
 
+템플릿은 윈도우마다 `even-horizontal` 레이아웃으로 왼쪽에 Claude Code, 오른쪽에 `nvim -c "'0"`(마지막 편집 위치로 복귀) pane을 두는 형태이며, 예시 파일에는 윈도우 3개가 들어 있습니다. 런처는 Claude CLI 기동을 5초 기다린 뒤 각 윈도우의 1번 pane에 `/sc:load` 를 보냅니다.
+
 ### 설치
 
 ```bash
 # tmux.conf 심볼릭 링크
 ln -s /path/to/MyConfig/tmux/tmux.conf ~/.tmux.conf
 
+# TPM 설치 — tmux.conf 마지막 줄이 이 경로를 실행하므로 필수
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# tmux를 띄운 뒤 prefix + I 로 플러그인 설치 (tmux-sensible, tmux-yank)
+tmux
+
 # (선택) 런처를 어디서든 실행할 수 있게 PATH 상의 디렉터리에 링크
 ln -s /path/to/MyConfig/tmux/claude-research ~/.local/bin/claude-research
 ```
+
+> macOS에서는 `tmux-256color` terminfo가 없어 색이 깨질 수 있습니다. `infocmp tmux-256color` 가 실패하면 `tic -xe tmux-256color,tmux <(infocmp -x tmux-256color)` 로 설치하세요 (`tmux.conf` 상단 주석에 같은 안내가 있습니다).
 
 ## Ghostty
 
@@ -202,7 +221,7 @@ ln -s /path/to/MyConfig/tmux/claude-research ~/.local/bin/claude-research
 | Primary | JetBrainsMono Nerd Font (영문, ligature 풍부) |
 | Fallback | Apple SD Gothic Neo (CJK, macOS 시스템 통합) |
 | Size | 14 |
-| Ligature | `+calt`, `+liga` 활성 (`=>`, `!=`, `>=`, `===`, `|>` 등) |
+| Ligature | `+calt`, `+liga` 활성 (`=>`, `!=`, `>=`, `===`, `\|>` 등) |
 | Retina | `font-thicken = true`, `font-thicken-strength = 100` |
 
 ### 테마
@@ -274,11 +293,11 @@ ln -s /path/to/MyConfig/ghostty ~/.config/ghostty
 
 | 블록 | 내용 |
 |------|------|
-| `permissions.allow` | 읽기 전용·일상 명령 자동 허용 — `grep`/`ls`/`cat`/`find`, `git status/log/diff/add/commit/…`, `gh`, `pytest`/`ruff`, `docker compose`, `npm install`, document-skills 계열 스킬, `WebFetch(docs.anthropic.com, github.com)` |
+| `permissions.allow` | 확인 없이 실행할 명령 — 조회(`grep`/`ls`/`cat`/`find`/`tree`), **파일 조작**(`mv`/`mkdir`/`touch`, `Edit(*.py)`·`*.docx`·`*.pptx`), `push`/`reset`/`rebase` 를 뺀 대부분의 git 하위 명령과 `gh`, `python`/`pytest`/`ruff`/`pip install`, `docker compose`, `npm init`/`install`, document-skills 계열 스킬, `WebSearch`·`WebFetch(docs.anthropic.com, github.com)`, airis MCP 게이트웨이 |
 | `permissions.deny` | 파괴적·민감 작업 차단 — `sudo`, `git push/reset/rebase`, `npm uninstall`/`npm remove`, SSH 키·`*token*` 읽기, `secrets/` 편집 |
-| `hooks` | 모든 라이프사이클 이벤트(SessionStart/End, UserPromptSubmit, Stop, PostToolUse, PermissionRequest 등)에서 [Superset](https://github.com/superset-sh/superset) 에이전트 상태 알림 스크립트 호출. `$SUPERSET_HOME_DIR`가 없으면 아무 일도 하지 않음(no-op) |
-| `enabledPlugins` / `extraKnownMarketplaces` | document-skills, tavily, lazy2work(개인 마켓플레이스) 등 플러그인 소스 |
-| 기타 | `model`, `effortLevel`과 모델별 오버라이드(`modelSettings`), `editorMode = vim`, `tui`, 비활성화한 내장 스킬(`skillOverrides`) |
+| `hooks` | 8개 라이프사이클 이벤트(SessionStart/SessionEnd, UserPromptSubmit, Stop/StopFailure, PostToolUse/PostToolUseFailure, PermissionRequest)에서 [Superset](https://github.com/superset-sh/superset) 에이전트 상태 알림 스크립트 호출. `$SUPERSET_HOME_DIR`가 없으면 아무 일도 하지 않음(no-op) |
+| `enabledPlugins` / `extraKnownMarketplaces` | 활성 — document-skills(anthropics/skills), lazy2work(개인 마켓플레이스), tavily, ui-ux-pro-max · 비활성 — langchain-skills, frontend-design |
+| 기타 | `model`, `effortLevel`과 모델별 오버라이드(`modelSettings`), `editorMode = vim`, `tui`, 끈 내장 스킬 14개(`skillOverrides`) |
 
 > **주의 — 복사해 쓰기 전에 검토하세요.** 이 파일은 `"defaultMode": "auto"`와 `"skipDangerousModePermissionPrompt": true`로 권한 확인을 최소화한 **개인용 설정**입니다. 위 `deny` 목록이 안전망 역할을 하지만, 그대로 가져다 쓰면 같은 수준의 자동 실행 권한을 에이전트에 부여하게 됩니다. `permissions`를 본인 환경에 맞게 조정한 뒤 사용하세요.
 
@@ -307,12 +326,13 @@ ls -l ~/.claude/settings.json
 ## 의존성
 
 - [Neovim](https://neovim.io/) >= 0.10
-- [tmux](https://github.com/tmux/tmux) >= 3.4
+- [tmux](https://github.com/tmux/tmux) >= 3.4 + [TPM](https://github.com/tmux-plugins/tpm) (`tmux.conf` 마지막 줄이 TPM을 실행합니다)
 - [tmuxp](https://github.com/tmux-python/tmuxp) (세션 런처 사용 시)
 - [Ghostty](https://ghostty.org/) >= 1.3 (선택; 키바인딩·`bell-features` 사용 시)
+- JetBrainsMono Nerd Font (Ghostty 기본 폰트; CJK fallback인 Apple SD Gothic Neo는 macOS 기본 제공)
 - [Claude Code](https://claude.ai/claude-code) (nvim `claudecode` extra, 세션 런처, `claude/` 설정)
 - [Superset](https://github.com/superset-sh/superset) (선택; 없으면 Claude Code hooks는 no-op)
-- [pandoc](https://pandoc.org/) + xelatex (선택; Markdown → PDF 변환 시)
+- [pandoc](https://pandoc.org/) + xelatex (선택; Markdown → PDF 변환 시). `pdf-korean` 정의 파일은 저장소에 없으므로 `~/.local/share/pandoc/defaults/pdf-korean.yaml` 에 직접 두어야 합니다
 
 ## License
 
