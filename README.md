@@ -152,7 +152,7 @@ Claude Code 같은 풀스크린 TUI가 tmux 안에서 깨지지 않도록 한 �
 
 ### tmuxp 세션 런처
 
-`claude-research` 스크립트로 Claude Code + Neovim 개발 환경을 한 번에 시작할 수 있습니다. 스크립트는 자기 위치(`tmux/`)의 `tmux_init.yaml`을 읽으며, 심볼릭 링크를 통해 실행해도 실제 경로를 따라갑니다(`readlink -f`). 세션 생성 후에는 각 윈도우의 첫 pane에 `/sc:load`를 자동 전송합니다.
+`claude-research` 스크립트로 Claude Code + Neovim 개발 환경을 한 번에 시작할 수 있습니다. 스크립트는 자기 위치(`tmux/`)의 `tmux_init.yaml`을 읽으며, 심볼릭 링크를 통해 실행해도 실제 경로를 따라갑니다(`readlink -f`). 로드 전에 각 윈도우의 Claude Code pane 명령 끝에 `--rc '<window_name>'`을 덧붙인 임시 YAML을 만들어 사용하므로, Remote Control이 세션 시작과 함께 켜지고 claude.ai/code에 표시되는 세션 이름이 tmux 윈도우 이름과 같아집니다(`/rc` 슬래시 명령의 대화형 패널 없음). 세션 생성 후에는 각 윈도우의 첫 pane에 `/sc:load`를 자동 전송합니다.
 
 ```bash
 # 1) 세션 템플릿을 복사해 자신의 프로젝트 경로에 맞게 수정 (tmux_init.yaml 은 gitignore 대상)
@@ -166,6 +166,12 @@ cp tmux/tmux_init_example.yaml tmux/tmux_init.yaml
 
 # 기존 세션 종료 후 새로 생성
 ./tmux/claude-research -k
+
+# Remote Control 이름 주입 없이 YAML 그대로 로드
+./tmux/claude-research -R
+
+# --rc 주입 결과만 diff로 확인 (세션 생성 안 함)
+./tmux/claude-research --dry-run
 ```
 
 ### 설치

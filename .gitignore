@@ -276,5 +276,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 tmux_init.yaml
+# claude-research 런처가 --rc 주입용으로 잠시 만드는 임시 YAML
+.tmux_init.rc-*.yaml
 
 tmux_init.yaml
