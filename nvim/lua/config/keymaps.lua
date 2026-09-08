@@ -40,7 +40,22 @@ vim.keymap.set("n", "<leader>cP", function()
   }, { text = true }, function(obj)
     vim.schedule(function()
       if obj.code == 0 then
-        vim.notify("PDF 변환 완료: " .. basename .. ".pdf", vim.log.levels.INFO)
+        -- pandoc은 필터(diagram.lua 등)가 실패해도 exit 0으로 끝난다.
+        -- 경고를 흘려보내면 mermaid 다이어그램이 코드블록으로 남은 것을 모르고 지나친다.
+        local warnings = {}
+        for line in (obj.stderr or ""):gmatch("[^\n]+") do
+          if line:find("%[WARNING%]") or line:find("^Error") then
+            table.insert(warnings, line)
+          end
+        end
+        if #warnings > 0 then
+          vim.notify(
+            "PDF 생성됨 (경고 " .. #warnings .. "건): " .. basename .. ".pdf\n" .. table.concat(warnings, "\n"),
+            vim.log.levels.WARN
+          )
+        else
+          vim.notify("PDF 변환 완료: " .. basename .. ".pdf", vim.log.levels.INFO)
+        end
         vim.system({ "open", "-R", pdf_path })
       else
         vim.notify("PDF 변환 실패:\n" .. (obj.stderr or ""), vim.log.levels.ERROR)
