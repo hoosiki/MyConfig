@@ -1,8 +1,12 @@
 # MyConfig
 
-> **Version**: v1.5.0 · **Last updated**: 2026-09-08
+> **Version**: v1.6.0 · **Last updated**: 2026-09-08
 
-macOS 개발 환경을 위한 Neovim + tmux + Ghostty + Claude Code 설정 파일 모음입니다.
+macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊김 없이 하기 위한 개발 환경 설정 모음입니다. Neovim·tmux·Ghostty·Claude Code를 하나의 키맵·테마·세션 체계로 묶어, clone 후 심볼릭 링크만 걸면 같은 환경이 그대로 재현됩니다.
+
+## 왜 이 저장소인가
+
+네 도구를 각각 설정하면 키맵이 서로 어긋나고, 한글 PDF 변환이나 TUI 렌더링처럼 조합에서만 드러나는 문제는 개별 문서 어디에도 없습니다. 이 저장소는 그 접점만 모아 둔 것입니다 — iTerm2 키바인딩의 Ghostty 이식, tmux 안에서 Claude Code가 깨지지 않게 하는 설정, 키맵 하나로 끝나는 한글 Markdown → PDF 경로.
 
 ## 특징
 
@@ -40,6 +44,8 @@ MyConfig/
 │   ├── lazyvim.json
 │   ├── stylua.toml
 │   ├── LICENSE            # Apache 2.0 (LazyVim starter template)
+│   ├── README.md          # 루트 README·라이선스 문서로 가는 포인터
+│   ├── AboutRepository.md # Apache-2.0 / MIT 경계 설명
 │   └── lua/
 │       ├── config/        # 개인 설정 (options, keymaps, autocmds)
 │       └── plugins/       # 플러그인 설정
@@ -52,8 +58,10 @@ MyConfig/
 ├── ghostty/               # Ghostty 터미널 설정
 │   └── config             # 키바인딩 (iTerm2 → Ghostty 마이그레이션)
 │
-└── claude/                # Claude Code 사용자 설정
-    └── settings.json      # 권한 정책, hooks, 플러그인 (~/.claude/settings.json 의 실체)
+├── claude/                # Claude Code 사용자 설정
+│   └── settings.json      # 권한 정책, hooks, 플러그인
+│
+└── LICENSE                # MIT (저장소 전체 기본 라이선스)
 ```
 
 ## Neovim
@@ -91,7 +99,7 @@ MyConfig/
 | `follow-md-links.nvim` | `[label](path)` / `[[wiki]]` 링크를 `<CR>` 로 따라가기 | `<CR>` |
 | `pandoc` (외부) | Markdown → PDF (한글, xelatex) | `<leader>cP` |
 
-`<leader>cP` 는 `pandoc -d pdf-korean` 정의 파일과 `~/SynologyDrive/PublicShare/pdfs/` 출력 디렉터리를 사용합니다 (`lua/config/keymaps.lua`).
+`<leader>cP` 는 `pandoc -d pdf-korean` 정의 파일과 `~/SynologyDrive/PublicShare/pdfs/` 출력 디렉터리를 사용합니다 (`lua/config/keymaps.lua`). pandoc은 필터가 실패해도 종료 코드 0으로 끝나기 때문에, 변환이 성공해도 경고가 있으면 건수와 함께 알림에 표시합니다 — mermaid 다이어그램이 코드블록으로 남는 경우를 놓치지 않기 위해서입니다.
 
 ### 주요 커스텀 옵션
 
@@ -99,7 +107,6 @@ MyConfig/
 - 시스템 클립보드 연동 (`unnamedplus`)
 - SSH 원격 환경에서 OSC 52를 통한 클립보드 지원
 - `<leader>fp`: 현재 파일 경로를 클립보드에 복사
-- `<leader>cP`: 현재 Markdown 파일을 PDF로 변환 (pandoc + xelatex, 한글 지원)
 - `<leader>eW`: Neo-tree 너비 토글 (30 ↔ 160)
 
 ### 설치
@@ -259,17 +266,19 @@ ln -s /path/to/MyConfig/ghostty ~/.config/ghostty
 
 ## Claude Code
 
-[Claude Code](https://claude.ai/claude-code)의 사용자 전역 설정(`~/.claude/settings.json`)을 저장소에서 관리합니다. 홈 디렉터리의 파일은 `claude/settings.json`을 가리키는 심볼릭 링크이므로, `/config`나 직접 편집으로 바뀐 설정이 곧바로 `git diff`에 나타납니다.
+[Claude Code](https://claude.ai/claude-code)의 사용자 전역 설정(`~/.claude/settings.json`)을 저장소에서 관리합니다. 홈 디렉터리 쪽을 `claude/settings.json`으로 심볼릭 링크해 두면 `/config`나 직접 편집으로 바뀐 설정이 곧바로 `git diff`에 나타납니다.
+
+> **주의 — 링크는 저절로 풀릴 수 있습니다.** Claude Code는 설정을 저장할 때 파일을 통째로 새로 쓰기 때문에, 심볼릭 링크가 일반 파일로 되돌아가는 경우가 있습니다. 그렇게 되면 홈 쪽 변경이 저장소에 더는 나타나지 않고 조용히 갈라집니다. 가끔 `ls -l ~/.claude/settings.json`으로 확인하고, 일반 파일로 바뀌어 있다면 홈 → 저장소로 내용을 먼저 반영한 뒤 다시 링크하세요.
 
 ### 담고 있는 것
 
 | 블록 | 내용 |
 |------|------|
 | `permissions.allow` | 읽기 전용·일상 명령 자동 허용 — `grep`/`ls`/`cat`/`find`, `git status/log/diff/add/commit/…`, `gh`, `pytest`/`ruff`, `docker compose`, `npm install`, document-skills 계열 스킬, `WebFetch(docs.anthropic.com, github.com)` |
-| `permissions.deny` | 파괴적·민감 작업 차단 — `sudo`, `git push/reset/rebase`, SSH 키·`*token*` 읽기, `secrets/` 편집 |
+| `permissions.deny` | 파괴적·민감 작업 차단 — `sudo`, `git push/reset/rebase`, `npm uninstall`/`npm remove`, SSH 키·`*token*` 읽기, `secrets/` 편집 |
 | `hooks` | 모든 라이프사이클 이벤트(SessionStart/End, UserPromptSubmit, Stop, PostToolUse, PermissionRequest 등)에서 [Superset](https://github.com/superset-sh/superset) 에이전트 상태 알림 스크립트 호출. `$SUPERSET_HOME_DIR`가 없으면 아무 일도 하지 않음(no-op) |
 | `enabledPlugins` / `extraKnownMarketplaces` | document-skills, tavily, lazy2work(개인 마켓플레이스) 등 플러그인 소스 |
-| 기타 | `model`, `effortLevel`, `editorMode = vim`, 비활성화한 내장 스킬(`skillOverrides`) |
+| 기타 | `model`, `effortLevel`과 모델별 오버라이드(`modelSettings`), `editorMode = vim`, `tui`, 비활성화한 내장 스킬(`skillOverrides`) |
 
 > **주의 — 복사해 쓰기 전에 검토하세요.** 이 파일은 `"defaultMode": "auto"`와 `"skipDangerousModePermissionPrompt": true`로 권한 확인을 최소화한 **개인용 설정**입니다. 위 `deny` 목록이 안전망 역할을 하지만, 그대로 가져다 쓰면 같은 수준의 자동 실행 권한을 에이전트에 부여하게 됩니다. `permissions`를 본인 환경에 맞게 조정한 뒤 사용하세요.
 
@@ -290,6 +299,9 @@ mv ~/.claude/settings.json ~/.claude/settings.json.bak
 
 # 심볼릭 링크 생성
 ln -s /path/to/MyConfig/claude/settings.json ~/.claude/settings.json
+
+# 링크가 유지되고 있는지 확인 (일반 파일로 되돌아갔다면 위 주의 참고)
+ls -l ~/.claude/settings.json
 ```
 
 ## 의존성
