@@ -39,7 +39,6 @@
       "Bash(docker compose:*)",
       "Bash(docker compose exec:*)",
       "Bash(docker compose logs:*)",
-      "Bash(node *.js:*)",
       "Bash(npm init:*)",
       "Bash(npm install:*)",
       "Edit(*.pptx)",
