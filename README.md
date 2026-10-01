@@ -1,6 +1,6 @@
 # MyConfig
 
-> **Version**: v1.7.0 · **Last updated**: 2026-09-08
+> **Version**: v1.8.0 · **Last updated**: 2026-10-01
 
 macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊김 없이 하기 위한 개발 환경 설정 모음입니다. Neovim·tmux·Ghostty·Claude Code를 하나의 키맵·테마·세션 체계로 묶어, clone 후 심볼릭 링크만 걸면 같은 환경이 그대로 재현됩니다.
 
@@ -18,6 +18,7 @@ macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊�
 ## 목차
 
 - [빠른 시작](#빠른-시작)
+- [설정 적용 방법](#설정-적용-방법)
 - [구조](#구조)
 - [Neovim](#neovim)
 - [tmux](#tmux)
@@ -32,7 +33,86 @@ macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊�
 git clone https://github.com/hoosiki/MyConfig.git
 ```
 
-각 도구는 서로 독립적이므로 필요한 것만 골라 적용할 수 있습니다. 아래 각 섹션의 **설치** 항목을 따라 심볼릭 링크를 만드세요. 예시의 `/path/to/MyConfig`는 clone한 경로로 바꿔 읽습니다.
+각 도구는 서로 독립적이므로 필요한 것만 골라 적용할 수 있습니다. 설정 파일은 복사하지 않고, **기존 파일을 백업한 뒤 그 자리에 저장소 파일을 가리키는 심볼릭 링크를 거는** 방식으로 적용합니다 — 한 번에 적용하는 방법과 주의할 점은 [설정 적용 방법](#설정-적용-방법), 플러그인 설치 같은 도구별 후속 단계는 각 섹션의 **설치** 항목을 보세요. 예시의 `/path/to/MyConfig`는 clone한 경로로 바꿔 읽습니다.
+
+## 설정 적용 방법
+
+설정 파일을 홈 디렉터리로 **복사하지 않습니다.** 원래 자리에 있던 파일·디렉터리는 백업해 두고, 그 자리에 이 저장소의 파일을 가리키는 심볼릭 링크를 만듭니다.
+
+- **어느 쪽을 고쳐도 같은 파일입니다** — `~/.config/nvim/...` 을 고치든 저장소 쪽을 고치든 바로 `git diff` 에 나타납니다. 복사본을 쓰면 두 쪽이 조용히 갈라집니다.
+- **`git pull` 이 곧 적용입니다** — 다른 머신에서 바꾼 설정을 받아오면 링크를 다시 걸 필요가 없습니다.
+- 대신 도구가 스스로 쓰는 파일도 저장소에 기록됩니다. `:Lazy update` 가 고치는 `nvim/lazy-lock.json`, Claude Code `/config` 가 고치는 `claude/settings.json` 이 `git status` 에 뜨는 것은 정상이며, 커밋하거나 `git checkout` 으로 되돌리면 됩니다.
+
+### 링크 대상
+
+| 저장소 경로 | 링크를 만들 위치 | 단위 | 비고 |
+|-------------|------------------|------|------|
+| `nvim/` | `~/.config/nvim` | 디렉터리 | 플러그인·상태 데이터(`~/.local/share/nvim`, `~/.local/state/nvim`, `~/.cache/nvim`)도 백업하면 깨끗한 상태에서 플러그인이 새로 설치됩니다 (선택) |
+| `tmux/tmux.conf` | `~/.tmux.conf` | 파일 | `~/.config/tmux/tmux.conf` 가 아니라 여기여야 합니다 — 설정 리로드(`prefix+r`)가 `~/.tmux.conf` 를 다시 읽습니다 |
+| `ghostty/` | `~/.config/ghostty` | 디렉터리 | macOS 전용 경로의 설정이 이 파일을 덮어쓸 수 있습니다 (아래 주의할 점) |
+| `claude/settings.json` | `~/.claude/settings.json` | **파일만** | `~/.claude` 디렉터리 전체를 링크하면 자격증명·세션 이력이 저장소로 들어옵니다 |
+| `tmux/claude-research` | `~/.local/bin/claude-research` | 파일 | 선택 — 런처를 PATH에서 실행하고 싶을 때만 |
+
+`tmux/tmux_init.yaml` 은 링크하지 않습니다. 저장소 안에서 예제를 복사해 만드는 개인 파일(gitignore 대상)입니다 — [tmuxp 세션 런처](#tmuxp-세션-런처) 참고.
+
+### 한 번에 적용하기
+
+아래를 셸에 그대로 붙여 넣으면 대상마다 **이미 이 저장소로 연결됨 → 건너뜀 · 다른 곳을 가리키는 링크 → 교체 · 실제 파일·디렉터리 → `<이름>.bak-<타임스탬프>` 로 백업** 한 뒤 링크를 만듭니다. 저장소에 없는 경로를 적으면 아무것도 건드리지 않고 `missing` 만 출력합니다. 여러 번 실행해도 안전하며(macOS bash 3.2·zsh에서 확인), 쓰지 않을 도구의 `link` 줄은 지우고 실행하세요. `REPO` 는 링크가 가리킬 절대 경로가 됩니다.
+
+```bash
+REPO="$(cd /path/to/MyConfig && pwd)"
+TS=$(date +%Y%m%d-%H%M%S)
+
+link() {
+  local src="$REPO/$1" dst="$2"
+  if [ ! -e "$src" ]; then
+    echo "missing $src"; return 1
+  fi
+  if [ "$(readlink "$dst")" = "$src" ]; then
+    echo "skip    $dst"; return 0
+  fi
+  mkdir -p "$(dirname "$dst")"
+  if [ -L "$dst" ]; then
+    echo "relink  $dst (was -> $(readlink "$dst"))"; rm "$dst"
+  elif [ -e "$dst" ]; then
+    echo "backup  $dst -> $dst.bak-$TS"; mv "$dst" "$dst.bak-$TS"
+  fi
+  ln -s "$src" "$dst" && echo "link    $dst -> $src"
+}
+
+link nvim                 ~/.config/nvim
+link tmux/tmux.conf       ~/.tmux.conf
+link ghostty              ~/.config/ghostty
+link claude/settings.json ~/.claude/settings.json
+link tmux/claude-research ~/.local/bin/claude-research
+```
+
+> 스니펫 안에 `#` 주석을 넣지 않은 것은 의도입니다. zsh 대화형 셸은 기본값(`interactivecomments` 꺼짐)에서 `#` 를 주석으로 보지 않아, 붙여 넣으면 오류가 납니다.
+
+손으로 하나씩 하고 싶다면 각 섹션의 **설치** 항목에 같은 작업을 도구별로 나눈 명령이 있습니다.
+
+적용 결과는 다음으로 확인합니다. 각 줄이 `-> /path/to/MyConfig/...` 로 끝나면 정상입니다.
+
+```bash
+ls -l ~/.config/nvim ~/.tmux.conf ~/.config/ghostty ~/.claude/settings.json
+```
+
+### 되돌리기
+
+링크를 지우고 백업을 제자리로 옮기면 됩니다. 링크를 지워도 저장소 파일은 그대로 남습니다.
+
+```bash
+rm ~/.config/nvim
+mv ~/.config/nvim.bak-<타임스탬프> ~/.config/nvim
+```
+
+### 주의할 점
+
+- **링크를 지울 때 경로 끝에 `/` 를 붙이지 마세요.** `rm -rf ~/.config/nvim/` 은 링크가 아니라 링크가 가리키는 **저장소의 `nvim/` 디렉터리를 지우고**, 링크는 그대로 남깁니다 (macOS에서 확인). 링크는 항상 `rm ~/.config/nvim` 처럼 `/` 없이 지웁니다.
+- **기존 디렉터리를 치우지 않고 `ln -s` 하면 엉뚱한 곳에 링크가 생깁니다.** `~/.config/nvim` 이 이미 디렉터리면 `ln -s /path/to/MyConfig/nvim ~/.config/nvim` 은 오류 없이 `~/.config/nvim/nvim` 을 만들고 끝납니다. 이미 있는 링크를 `ln -sf` 로 바꾸려 해도 링크가 가리키는 **저장소 디렉터리 안에** 새 링크가 생기므로, 손으로 바꿀 때는 `ln -sfn` 을 쓰세요. 백업(이동)을 먼저 하는 이유가 이것입니다.
+- **clone한 저장소를 옮기지 마세요.** 링크는 clone한 절대 경로를 가리키므로 저장소를 옮기거나 이름을 바꾸면 모든 링크가 끊깁니다. 옮겼다면 `REPO` 만 새 경로로 바꿔 위 스니펫을 다시 실행하면 기존 링크가 교체됩니다.
+- **Ghostty는 macOS 전용 경로를 나중에 읽습니다.** `~/Library/Application Support/com.mitchellh.ghostty/` 의 `config.ghostty`(또는 `config`)에 내용이 있으면, 링크한 `~/.config/ghostty/config` 의 같은 항목을 덮어씁니다. 그 파일은 비워 두거나 백업한 뒤 지우세요.
+- **Claude Code 설정 링크는 저절로 풀릴 수 있습니다** — [Claude Code](#claude-code) 섹션의 주의를 참고하세요.
 
 ## 구조
 
@@ -116,6 +196,11 @@ MyConfig/
 ```bash
 # 기존 nvim 설정 백업
 mv ~/.config/nvim ~/.config/nvim.bak
+
+# (선택) 플러그인·상태 데이터도 백업해 깨끗한 상태에서 시작
+mv ~/.local/share/nvim ~/.local/share/nvim.bak
+mv ~/.local/state/nvim ~/.local/state/nvim.bak
+mv ~/.cache/nvim ~/.cache/nvim.bak
 
 # 심볼릭 링크 생성
 ln -s /path/to/MyConfig/nvim ~/.config/nvim
@@ -282,6 +367,8 @@ mv ~/.config/ghostty ~/.config/ghostty.bak
 # 디렉터리 단위 심볼릭 링크 생성
 ln -s /path/to/MyConfig/ghostty ~/.config/ghostty
 ```
+
+> macOS에서는 `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty`(또는 `config`)가 위 파일보다 나중에 읽혀 같은 항목을 덮어씁니다. 이 저장소의 설정이 적용되지 않는 것 같다면 그 파일이 비어 있는지 먼저 확인하세요.
 
 ## Claude Code
 
