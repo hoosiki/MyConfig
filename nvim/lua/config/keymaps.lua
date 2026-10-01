@@ -11,7 +11,7 @@ end, { desc = "Copy file path to clipboard" })
 
 -- Markdown → PDF 변환 (pandoc + xelatex + 한글)
 -- 고정 출력 디렉터리(~/SynologyDrive/PublicShare/pdfs)로 저장 후 Finder에서 하이라이트
-local PDF_OUTPUT_DIR = "/Users/hoosiki/SynologyDrive/PublicShare/pdfs"
+local PDF_OUTPUT_DIR = vim.fn.expand("~/SynologyDrive/PublicShare/pdfs")
 vim.keymap.set("n", "<leader>cP", function()
   if vim.bo.filetype ~= "markdown" then
     vim.notify("Markdown 파일이 아닙니다", vim.log.levels.ERROR)

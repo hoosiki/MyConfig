@@ -100,7 +100,7 @@ MyConfig/
 | `pandoc` (외부) | Markdown → PDF (한글, xelatex) | `<leader>cP` |
 | `nvim-lint` / `conform.nvim` | Markdown에 한해 lint·저장 시 포맷 비활성 (prettier가 `_` 를 `*` 로 바꾸는 문제 회피) | — |
 
-`<leader>cP` 는 pandoc 정의 파일 `pdf-korean` 을 쓰고 결과를 `~/SynologyDrive/PublicShare/pdfs/` 에 저장합니다 (`lua/config/keymaps.lua`). 정의 파일(`~/.local/share/pandoc/defaults/pdf-korean.yaml`)과 출력 디렉터리는 **이 저장소에 포함되어 있지 않으므로 직접 준비해야 하며**, 출력 경로는 파일 상단 `PDF_OUTPUT_DIR` 상수에 절대 경로로 박혀 있으니 다른 환경에서는 고쳐 써야 합니다. pandoc은 필터가 실패해도 종료 코드 0으로 끝나기 때문에, 변환이 성공해도 경고가 있으면 건수와 함께 알림에 표시합니다 — mermaid 다이어그램이 코드블록으로 남는 경우를 놓치지 않기 위해서입니다.
+`<leader>cP` 는 pandoc 정의 파일 `pdf-korean` 을 쓰고 결과를 `~/SynologyDrive/PublicShare/pdfs/` 에 저장합니다 (`lua/config/keymaps.lua`). 정의 파일(`~/.local/share/pandoc/defaults/pdf-korean.yaml`)과 출력 디렉터리는 **이 저장소에 포함되어 있지 않으므로 직접 준비해야 하며**, 출력 경로는 파일 상단 `PDF_OUTPUT_DIR` 상수(`~/SynologyDrive/PublicShare/pdfs`)에 있으니 다른 디렉터리를 쓰려면 고쳐 쓰면 됩니다. pandoc은 필터가 실패해도 종료 코드 0으로 끝나기 때문에, 변환이 성공해도 경고가 있으면 건수와 함께 알림에 표시합니다 — mermaid 다이어그램이 코드블록으로 남는 경우를 놓치지 않기 위해서입니다.
 
 ### 주요 커스텀 옵션
 
