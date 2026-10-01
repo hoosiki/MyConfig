@@ -1,0 +1,55 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(brew-manager)",
+      "Skill(skill-updater)"
+    ]
+  },
+  "tui": "default",
+  "enabledPlugins": {
+    "document-skills@anthropic-agent-skills": true,
+    "langchain-skills@langchain-skills": false,
+    "lazy2work@hoosiki-marketplace": true,
+    "frontend-design@claude-code-plugins": false,
+    "tavily@tavily-plugins": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+  },
+  "extraKnownMarketplaces": {
+    "langchain-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/langchain-ai/langchain-skills.git"
+      }
+    },
+    "hoosiki-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "hoosiki/hoosiki-marketplace"
+      }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
+    },
+    "tavily-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/tavily-ai/skills.git"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    }
+  }
+}

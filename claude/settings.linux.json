@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(rm -rf:*)",
+      "Read(**/.env*)",
+      "Read(**/.envs/**)",
+      "Edit(**/.env*)",
+      "Edit(**/.envs/**)"
+    ]
+  },
+  "tui": "fullscreen",
+  "theme": "dark",
+  "agentPushNotifEnabled": true,
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "document-skills@anthropic-agent-skills": true,
+    "lazy2work@hoosiki-marketplace": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "mattpocock-skills@mattpocock": true
+  },
+  "extraKnownMarketplaces": {
+    "hoosiki-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "hoosiki/hoosiki-marketplace"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "directory",
+        "path": "/home/wearlab/.claude/mattpocock-skills"
+      }
+    }
+  }
+}

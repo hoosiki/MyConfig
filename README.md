@@ -1,8 +1,8 @@
 # MyConfig
 
-> **Version**: v1.8.0 · **Last updated**: 2026-10-01
+> **Version**: v1.9.0 · **Last updated**: 2026-10-01
 
-macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊김 없이 하기 위한 개발 환경 설정 모음입니다. Neovim·tmux·Ghostty·Claude Code를 하나의 키맵·테마·세션 체계로 묶어, clone 후 심볼릭 링크만 걸면 같은 환경이 그대로 재현됩니다.
+macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊김 없이 하기 위한 개발 환경 설정 모음입니다. Neovim·tmux·Ghostty·Claude Code를 하나의 키맵·테마·세션 체계로 묶어, clone 후 심볼릭 링크를 걸고 Claude Code 설정만 한 번 생성하면 같은 환경이 그대로 재현됩니다.
 
 ## 왜 이 저장소인가
 
@@ -11,7 +11,7 @@ macOS 터미널에서 한글 문서 작업과 AI 페어 프로그래밍을 끊�
 ## 특징
 
 - **한글 친화 Markdown 워크플로우** — 인라인 렌더링, 브라우저 미리보기, `pandoc` + xelatex 기반 한글 PDF 변환을 Neovim 키맵 하나로 실행
-- **Claude Code 통합** — LazyVim `claudecode` extra, Claude Code + Neovim을 한 번에 띄우는 tmuxp 세션 런처, Claude Code 권한 정책(`settings.json`) 버전 관리
+- **Claude Code 통합** — LazyVim `claudecode` extra, Claude Code + Neovim을 한 번에 띄우는 tmuxp 세션 런처, Claude Code 권한 정책을 공통층 + OS별 층으로 나눠 버전 관리
 - **iTerm2 → Ghostty 키바인딩 1:1 이식** — macOS 표준 키 조합(`Cmd+E`, `Cmd+/` 등)으로 LazyVim 기능 호출
 - **일관된 터미널 경험** — Neovim·Ghostty Tokyo Night 테마 통일, tmux 동기화 출력(DEC 2026) 패스스루로 TUI 화면 찢김 방지
 
@@ -41,7 +41,8 @@ git clone https://github.com/hoosiki/MyConfig.git
 
 - **어느 쪽을 고쳐도 같은 파일입니다** — `~/.config/nvim/...` 을 고치든 저장소 쪽을 고치든 바로 `git diff` 에 나타납니다. 복사본을 쓰면 두 쪽이 조용히 갈라집니다.
 - **`git pull` 이 곧 적용입니다** — 다른 머신에서 바꾼 설정을 받아오면 링크를 다시 걸 필요가 없습니다.
-- 대신 도구가 스스로 쓰는 파일도 저장소에 기록됩니다. `:Lazy update` 가 고치는 `nvim/lazy-lock.json`, Claude Code `/config` 가 고치는 `claude/settings.json` 이 `git status` 에 뜨는 것은 정상이며, 커밋하거나 `git checkout` 으로 되돌리면 됩니다.
+- 대신 도구가 스스로 쓰는 파일도 저장소에 기록됩니다. `:Lazy update` 가 고치는 `nvim/lazy-lock.json` 이 `git status` 에 뜨는 것은 정상이며, 커밋하거나 `git checkout` 으로 되돌리면 됩니다.
+- **Claude Code 설정만 예외로 링크하지 않습니다.** 두 머신의 플러그인 구성이 실제로 다르고, Claude Code 에는 사용자 전역 설정을 덮어쓸 오버라이드 레이어가 없기 때문입니다 — 저장소에 공통층과 OS별 층을 따로 두고 스크립트로 합성합니다. [Claude Code](#claude-code) 참고.
 
 ### 링크 대상
 
@@ -50,8 +51,9 @@ git clone https://github.com/hoosiki/MyConfig.git
 | `nvim/` | `~/.config/nvim` | 디렉터리 | 플러그인·상태 데이터(`~/.local/share/nvim`, `~/.local/state/nvim`, `~/.cache/nvim`)도 백업하면 깨끗한 상태에서 플러그인이 새로 설치됩니다 (선택) |
 | `tmux/tmux.conf` | `~/.tmux.conf` | 파일 | `~/.config/tmux/tmux.conf` 가 아니라 여기여야 합니다 — 설정 리로드(`prefix+r`)가 `~/.tmux.conf` 를 다시 읽습니다 |
 | `ghostty/` | `~/.config/ghostty` | 디렉터리 | macOS 전용 경로의 설정이 이 파일을 덮어쓸 수 있습니다 (아래 주의할 점) |
-| `claude/settings.json` | `~/.claude/settings.json` | **파일만** | `~/.claude` 디렉터리 전체를 링크하면 자격증명·세션 이력이 저장소로 들어옵니다 |
 | `tmux/claude-research` | `~/.local/bin/claude-research` | 파일 | 선택 — 런처를 PATH에서 실행하고 싶을 때만 |
+
+`claude/` 는 링크 대상이 아닙니다. `~/.claude/settings.json` 은 `claude/build-settings.py` 로 **생성**합니다 — [Claude Code](#claude-code) 참고.
 
 `tmux/tmux_init.yaml` 은 링크하지 않습니다. 저장소 안에서 예제를 복사해 만드는 개인 파일(gitignore 대상)입니다 — [tmuxp 세션 런처](#tmuxp-세션-런처) 참고.
 
@@ -83,8 +85,9 @@ link() {
 link nvim                 ~/.config/nvim
 link tmux/tmux.conf       ~/.tmux.conf
 link ghostty              ~/.config/ghostty
-link claude/settings.json ~/.claude/settings.json
 link tmux/claude-research ~/.local/bin/claude-research
+
+python3 "$REPO/claude/build-settings.py"
 ```
 
 > 스니펫 안에 `#` 주석을 넣지 않은 것은 의도입니다. zsh 대화형 셸은 기본값(`interactivecomments` 꺼짐)에서 `#` 를 주석으로 보지 않아, 붙여 넣으면 오류가 납니다.
@@ -94,7 +97,13 @@ link tmux/claude-research ~/.local/bin/claude-research
 적용 결과는 다음으로 확인합니다. 각 줄이 `-> /path/to/MyConfig/...` 로 끝나면 정상입니다.
 
 ```bash
-ls -l ~/.config/nvim ~/.tmux.conf ~/.config/ghostty ~/.claude/settings.json
+ls -l ~/.config/nvim ~/.tmux.conf ~/.config/ghostty
+```
+
+Claude Code 설정은 링크가 아니라 생성된 파일이므로, 다시 실행해 `already up to date` 가 나오면 정상입니다.
+
+```bash
+python3 /path/to/MyConfig/claude/build-settings.py
 ```
 
 ### 되돌리기
@@ -138,8 +147,11 @@ MyConfig/
 ├── ghostty/               # Ghostty 터미널 설정
 │   └── config             # 키바인딩 (iTerm2 → Ghostty 마이그레이션)
 │
-├── claude/                # Claude Code 사용자 설정
-│   └── settings.json      # 권한 정책, hooks, 플러그인
+├── claude/                # Claude Code 사용자 설정 (링크 아님 — 합성해서 생성)
+│   ├── settings.common.json   # 두 머신 공통 — 권한 정책, hooks, 모델, skillOverrides
+│   ├── settings.linux.json    # Linux 전용 — 플러그인·마켓플레이스, tui, theme
+│   ├── settings.macos.json    # macOS 전용 — 플러그인·마켓플레이스, tui
+│   └── build-settings.py      # 공통 + OS별 → ~/.claude/settings.json
 │
 └── LICENSE                # MIT (저장소 전체 기본 라이선스)
 ```
@@ -372,43 +384,79 @@ ln -s /path/to/MyConfig/ghostty ~/.config/ghostty
 
 ## Claude Code
 
-[Claude Code](https://claude.ai/claude-code)의 사용자 전역 설정(`~/.claude/settings.json`)을 저장소에서 관리합니다. 홈 디렉터리 쪽을 `claude/settings.json`으로 심볼릭 링크해 두면 `/config`나 직접 편집으로 바뀐 설정이 곧바로 `git diff`에 나타납니다.
+[Claude Code](https://claude.ai/claude-code)의 사용자 전역 설정(`~/.claude/settings.json`)을 저장소에서 관리합니다. 다른 설정과 달리 **심볼릭 링크를 쓰지 않고, 저장소의 층을 합성해 생성**합니다.
 
-> **주의 — 링크는 저절로 풀릴 수 있습니다.** Claude Code는 설정을 저장할 때 파일을 통째로 새로 쓰기 때문에, 심볼릭 링크가 일반 파일로 되돌아가는 경우가 있습니다. 그렇게 되면 홈 쪽 변경이 저장소에 더는 나타나지 않고 조용히 갈라집니다. 가끔 `ls -l ~/.claude/settings.json`으로 확인하고, 일반 파일로 바뀌어 있다면 홈 → 저장소로 내용을 먼저 반영한 뒤 다시 링크하세요.
+```
+claude/settings.common.json    두 머신 공통
+claude/settings.linux.json  ┐  OS별 차이 (플러그인 구성, tui, theme 등)
+claude/settings.macos.json  ┘
+            │
+            ├─ python3 claude/build-settings.py
+            ▼
+   ~/.claude/settings.json     생성된 실제 파일 (추적하지 않음)
+```
+
+**왜 링크가 아닌가.** 두 머신의 플러그인·마켓플레이스 구성이 실제로 다릅니다(Linux 에는 mattpocock, macOS 에는 langchain·tavily). 한 파일을 공유하면 어느 한쪽이 반드시 깨집니다. 그리고 Claude Code 에는 사용자 전역 설정을 덮어쓸 오버라이드 레이어가 **없습니다** — `settings.local.json` 은 프로젝트 스코프 전용이고(우선순위는 user → project → local), `~/.claude/settings.local.json` 에 둔 값은 읽히지 않습니다. 그래서 "공통 + 머신별" 을 설정 파일 계층으로 표현할 수 없고, 합성이라는 우회가 필요합니다.
+
+부수 효과로 이전의 "링크가 저절로 풀린다" 는 문제도 사라집니다. Claude Code 가 `/config` 로 파일을 통째로 새로 써도 깨질 링크가 없습니다.
+
+**병합 규칙**
+
+| 대상 | 규칙 |
+|------|------|
+| `permissions.allow` / `deny` / `ask` / `additionalDirectories` | 합집합 (공통 먼저, 중복 제거) |
+| 객체 (`modelSettings`, `skillOverrides`, `hooks`, `enabledPlugins`, `extraKnownMarketplaces` …) | 재귀 병합 |
+| 스칼라 (`tui`, `theme`, `model` …) | OS별 층이 이김 |
+
+**사용법**
+
+```bash
+python3 claude/build-settings.py              # 이 머신용으로 생성 (OS 자동 판별)
+python3 claude/build-settings.py --dry-run     # 적용 전 diff 확인
+python3 claude/build-settings.py --os macos    # 다른 머신 설정 미리보기
+```
+
+덮어쓰기 전에 `~/.claude/settings.json.bak.<타임스탬프>` 로 백업하고, 내용이 같으면 쓰지 않습니다(멱등).
+
+**설정을 바꿀 때.** `/config` 나 권한 프롬프트의 "always allow" 는 생성된 `~/.claude/settings.json` 을 고치므로 저장소에 반영되지 않습니다. 남기려면 해당 변경을 공통층이나 OS별 층에 손으로 옮긴 뒤 스크립트를 다시 돌리세요. `--dry-run` 으로 홈 쪽에만 있는 변경을 찾을 수 있습니다.
 
 ### 담고 있는 것
 
 | 블록 | 내용 |
 |------|------|
 | `permissions.allow` | 확인 없이 실행할 명령 — 조회(`grep`/`ls`/`cat`/`find`/`tree`), **파일 조작**(`mv`/`mkdir`/`touch`, `Edit(*.py)`·`*.docx`·`*.pptx`), `push`/`reset`/`rebase` 를 뺀 대부분의 git 하위 명령과 `gh`, `python`/`pytest`/`ruff`/`pip install`, `docker compose`, `npm init`/`install`, document-skills 계열 스킬, `WebSearch`·`WebFetch(docs.anthropic.com, github.com)`, airis MCP 게이트웨이 |
-| `permissions.deny` | 파괴적·민감 작업 차단 — `sudo`, `git push/reset/rebase`, `npm uninstall`/`npm remove`, SSH 키·`*token*` 읽기, `secrets/` 편집 |
+| `permissions.deny` | 파괴적·민감 작업 차단 — `sudo`, `git push/reset/rebase`, `npm uninstall`/`npm remove`, SSH 키·`*token*` 읽기, `secrets/` 편집 · **Linux 층에서 추가로** `rm`/`rm -rf`, `.env*`·`.envs/**` 읽기·편집까지 차단 |
 | `hooks` | 8개 라이프사이클 이벤트(SessionStart/SessionEnd, UserPromptSubmit, Stop/StopFailure, PostToolUse/PostToolUseFailure, PermissionRequest)에서 [Superset](https://github.com/superset-sh/superset) 에이전트 상태 알림 스크립트 호출. `$SUPERSET_HOME_DIR`가 없으면 아무 일도 하지 않음(no-op) |
-| `enabledPlugins` / `extraKnownMarketplaces` | 활성 — document-skills(anthropics/skills), lazy2work(개인 마켓플레이스), tavily, ui-ux-pro-max · 비활성 — langchain-skills, frontend-design |
-| 기타 | `model`, `effortLevel`과 모델별 오버라이드(`modelSettings`), `editorMode = vim`, `tui`, 끈 내장 스킬 14개(`skillOverrides`) |
+| `enabledPlugins` / `extraKnownMarketplaces` | **OS별로 다름** — 공통 활성: document-skills(anthropics/skills), lazy2work(개인 마켓플레이스), ui-ux-pro-max · Linux 추가: mattpocock-skills(로컬 디렉터리 소스) · macOS 추가: tavily, 비활성 상태의 langchain-skills·frontend-design |
+| 기타 | 공통 — `model`, `effortLevel`과 모델별 오버라이드(`modelSettings`), `editorMode = vim`, 끈 내장 스킬 14개(`skillOverrides`) · OS별 — `tui`(Linux `fullscreen` / macOS `default`), `theme`(Linux 전용) |
 
 > **주의 — 복사해 쓰기 전에 검토하세요.** 이 파일은 `"defaultMode": "auto"`와 `"skipDangerousModePermissionPrompt": true`로 권한 확인을 최소화한 **개인용 설정**입니다. 위 `deny` 목록이 안전망 역할을 하지만, 그대로 가져다 쓰면 같은 수준의 자동 실행 권한을 에이전트에 부여하게 됩니다. `permissions`를 본인 환경에 맞게 조정한 뒤 사용하세요.
 
 ### 저장소에 포함되지 않는 것
 
-`settings.json` **한 파일만** 추적합니다. 아래는 비밀값·개인 이력이 들어 있으므로 커밋하지 않습니다.
+`claude/` 안의 **세 층과 생성 스크립트만** 추적합니다. 생성 결과물인 `~/.claude/settings.json` 은 추적하지 않습니다. 아래도 비밀값·개인 이력이 들어 있으므로 커밋하지 않습니다.
 
 - `~/.claude/.credentials.json` — OAuth 자격증명
 - `~/.claude.json` — MCP 서버 설정(API 키 포함), 계정 정보
-- `~/.claude/settings.local.json` — 머신별 로컬 오버라이드 (전역 gitignore 대상)
+- `~/.mcp.json` — 프로젝트 스코프 MCP 설정(API 키 포함)
+- `~/.claude/settings.local.json` — 과거 세션 잔재. Claude Code 는 이 경로를 **읽지 않습니다**(`settings.local.json` 은 프로젝트 스코프 전용)
 - `~/.claude/projects/`, `history.jsonl`, `shell-snapshots/` — 세션 전사본·프롬프트 이력·셸 환경 스냅샷
 
 ### 설치
 
 ```bash
-# 기존 설정 백업 (있는 경우)
-mv ~/.claude/settings.json ~/.claude/settings.json.bak
-
-# 심볼릭 링크 생성
-ln -s /path/to/MyConfig/claude/settings.json ~/.claude/settings.json
-
-# 링크가 유지되고 있는지 확인 (일반 파일로 되돌아갔다면 위 주의 참고)
-ls -l ~/.claude/settings.json
+python3 /path/to/MyConfig/claude/build-settings.py --dry-run
+python3 /path/to/MyConfig/claude/build-settings.py
 ```
+
+첫 명령으로 기존 설정과의 diff 를 먼저 확인하고, 두 번째로 실제 생성합니다. 덮어쓰기 전 백업은 자동입니다.
+
+> **예전 방식에서 넘어올 때 (macOS).** `~/.claude/settings.json` 이 저장소의 `claude/settings.json` 을 가리키는 심볼릭 링크였다면, 그 파일은 세 층으로 쪼개져 더 이상 없습니다. `git pull` 후 링크가 끊어지므로 아래로 한 번 정리하세요.
+>
+> ```bash
+> [ -L ~/.claude/settings.json ] && rm ~/.claude/settings.json
+> python3 /path/to/MyConfig/claude/build-settings.py
+> ```
 
 ## 의존성
 

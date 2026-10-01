@@ -60,15 +60,15 @@
       "Skill(document-skills:slack-gif-creator)",
       "Skill(document-skills:skill-creator)",
       "Skill(document-skills:webapp-testing)",
-      "Skill(brew-manager)",
-      "Skill(skill-updater)",
       "Edit(*.py)",
       "WebSearch",
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:github.com)",
       "mcp__airis-mcp-gateway__airis-find",
       "mcp__airis-mcp-gateway__airis-exec",
-      "mcp__airis-mcp-gateway__airis-schema"
+      "mcp__airis-mcp-gateway__airis-schema",
+      "Bash(node *.js)",
+      "Bash(node *.js *)"
     ],
     "deny": [
       "Bash(sudo:*)",
@@ -85,6 +85,20 @@
     "defaultMode": "auto"
   },
   "model": "opus[1m]",
+  "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-opus-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    }
+  },
+  "editorMode": "vim",
+  "skipDangerousModePermissionPrompt": true,
   "skillOverrides": {
     "code-review": "off",
     "wizard": "off",
@@ -185,63 +199,5 @@
         ]
       }
     ]
-  },
-  "enabledPlugins": {
-    "document-skills@anthropic-agent-skills": true,
-    "langchain-skills@langchain-skills": false,
-    "lazy2work@hoosiki-marketplace": true,
-    "frontend-design@claude-code-plugins": false,
-    "tavily@tavily-plugins": true,
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true
-  },
-  "extraKnownMarketplaces": {
-    "langchain-skills": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/langchain-ai/langchain-skills.git"
-      }
-    },
-    "hoosiki-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "hoosiki/hoosiki-marketplace"
-      }
-    },
-    "anthropic-agent-skills": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/skills"
-      }
-    },
-    "claude-code-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-code"
-      }
-    },
-    "tavily-plugins": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/tavily-ai/skills.git"
-      }
-    },
-    "ui-ux-pro-max-skill": {
-      "source": {
-        "source": "github",
-        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
-      }
-    }
-  },
-  "effortLevel": "xhigh",
-  "modelSettings": {
-    "claude-fable-5": {
-      "effortLevel": "xhigh"
-    },
-    "claude-opus-5": {
-      "effortLevel": "xhigh"
-    }
-  },
-  "tui": "default",
-  "skipDangerousModePermissionPrompt": true,
-  "editorMode": "vim"
+  }
 }
